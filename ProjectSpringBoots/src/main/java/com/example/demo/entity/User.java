@@ -27,15 +27,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
-    @Column(name = "fullName",nullable = false,length = 200)
+    @Column(name = "full_name",nullable = false,length = 200)
     private String name;
+    @Column(name = "address",length = 300)
+    private String address;
     @Column(name ="email",nullable = false,length = 200)
     private String email;
     @Type(type = "json")
-    @Column(name = "roles", columnDefinition = "json")
-    private List<String> roles;
+    @Column(name = "roles", columnDefinition = "json default USER")
+    private List<String> role;
     @Column(name = "phone",length = 200)
     private String phone;
+    @Column(name = "password",length = 200,nullable = false)
+    private String password;
     @Column(name = "status", columnDefinition = "BOOLEAN")
     private Boolean status;
     @Column(name = "createdAt")

@@ -25,6 +25,7 @@ public class Finance {
     private Timestamp createdAt;
     @Column(name = "created_by")
     private long createdBy;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;}

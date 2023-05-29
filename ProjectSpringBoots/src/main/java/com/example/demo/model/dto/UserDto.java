@@ -15,13 +15,12 @@ import java.util.List;
 public class UserDto {
     private long id;
 
-    private String fullName;
+    private String name;
 
     private String email;
 
     private String phone;
 
-    private String address;
 
     private List<String> roles;
 

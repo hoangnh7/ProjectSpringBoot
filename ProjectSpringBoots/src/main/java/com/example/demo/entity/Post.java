@@ -14,6 +14,11 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Entity(name = "post")
 @Table(name = "post")
+//@NamedNativeQuery(
+//        name = "findAllByStatus",
+//        query= "SELECT * FROM user WHERE id = ?1",
+//        result
+//)
 public class Post {
     @Id
     @Column(name = "id")

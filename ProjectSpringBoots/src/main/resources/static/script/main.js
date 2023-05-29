@@ -18,7 +18,7 @@ $(function () {
   $('.back-to-top').click(function () {
     $("html, body").animate({ scrollTop: 0 }, 600);
     return false;
-  }); 
+  });
 })
 
 // Login/Sign up validate
@@ -59,40 +59,26 @@ $(document).on('click', function (e) {
 
     if (isValid == true) {
 
-      CURRENT_ACCOUNT_DETAILS = signInEmailValue;
+     req = {
+             email: signInEmailValue,
+             password: signInPasswordValue
+          }
+          var myJSON = JSON.stringify(req);
+          $.ajax({
+             url: '/api/login',
+             type: 'POST',
+             data: myJSON,
+             contentType: "application/json; charset=utf-8",
+             success: function(data) {
+                 alert("Đăng nhập thành công");
+                 signedValidate(true, data.email);
+                 $('.modal').modal('hide');
+             },
+             error: function(data) {
+//                 toastr.warning(data.responseJSON.message);
+             },
+          });
 
-      $('.invalid-feedback').css('display', 'none');
-      let checkAccount;
-
-      if (!$.isEmptyObject(DB.getAccountData())) {
-        checkAccount = DB.getAccountData()['accounts'].hasOwnProperty(signInEmailValue)
-
-        if (checkAccount) {
-          account = DB.getAccountData()['accounts'][signInEmailValue][0];
-          accountDetails = DB.getAccountData()['accounts'][signInEmailValue][0]['account-details'];
-        }
-      }
-
-      if (checkAccount == false) {
-        signInEmailInvalid.css('display', 'block');
-        signInEmailInvalid.html('Email không tồn tại');
-
-        isValid = false;
-      } else {
-        if (signInEmailValue == accountDetails['email'] && signInPasswordValue == accountDetails['password']) {
-          $('.modal').modal('hide');
-          signed = true;
-          DB.setSignedStatus(signed);
-          CURRENT_SIGNED_ACCOUNT['current-account-details'] = account;
-
-          DB.setSignedAccount(CURRENT_SIGNED_ACCOUNT);
-          signedValidate(signed);
-        }
-        if (signInPasswordValue !== accountDetails['password']) {
-          signInPasswordInvalid.css('display', 'block');
-          signInPasswordInvalid.html('Password không đúng');
-        }
-      }
     }
   }
 
@@ -191,18 +177,28 @@ $(document).on('click', function (e) {
     // Save to localStorage
 
     if (isValid == true) {
-
-      if (SIGNUP_DATA['accounts'] == undefined) {
-        SIGNUP_DATA['accounts'] = {};
-        SIGNUP_DATA['current-email'] = [];
-      }
-      SIGNUP_DATA['accounts'][emailValue] = [];
-
-      let accounts = { 'email': emailValue, 'password': passwordValue, 'phone': phoneValue, 'full-name': fullNameValue };
-
-      SIGNUP_DATA['accounts'][emailValue].push({ 'account-details': accounts });
-      SIGNUP_DATA['current-email'].push(emailValue)
-      DB.setAccountData(SIGNUP_DATA);
+        req = {
+                 name: fullNameValue,
+                 email: emailValue,
+                 password: passwordValue,
+                 phone: phoneValue
+             }
+             var myJSON = JSON.stringify(req);
+             $.ajax({
+                 url: '/api/register',
+                 type: 'POST',
+                 data: myJSON,
+                 contentType: "application/json; charset=utf-8",
+                 success: function(data) {
+//                     toastr.success("Đăng ký thành công");
+                      alert("đăng ký thành công");
+                     signedValidate(true, data.fullName);
+                     $('.modal').modal('hide');
+                 },
+                 error: function(data) {
+//                     toastr.warning(data.responseJSON.message);
+                 },
+             });
       $('.modal').modal('hide');
     }
   }
@@ -305,13 +301,15 @@ function resetModal() {
   })
 }
 
-function signedValidate(status = false) {
+function signedValidate(status = false, fullname = '') {
   if (status == true) {
+    isLogined = true;
     let signedLink = `
-  <a id="account-setting" class="nav-link account-setting" href="./account.html">Xin chào ${DB.getSignedAccount()['current-account-details']['account-details']['full-name']}</a>`;
+  <a id="account-setting" class="nav-link account-setting" href="/tai-khoan">Xin chào ${fullname}</a>`;
 
     $('.account-setting').replaceWith(signedLink);
   } else {
+    isLogined = false;
     let notSignedLink = `
   <a class="nav-link account-setting" href="" data-toggle="modal" data-target="#signInSignUp">Tài khoản</a>
   `;
